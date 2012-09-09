@@ -168,6 +168,10 @@ begin
 	end process;
 	
 	-- Output display enable signal.
+	H_DISP_EN <=	'1' when H_COUNT >= "0000000111" and H_COUNT < "1010000111" else
+						'0';
+	V_DISP_EN <=	'1' when V_COUNT < "0110010000" else
+						'0';
 	
 	process( PIXEL_CLK, RST ) begin
 		if( RST = '1' ) then
@@ -179,6 +183,10 @@ begin
 				VGA_R <= RGB( 11 downto 8 );
 				VGA_G <= RGB( 7 downto 4 );
 				VGA_B <= RGB( 3 downto 0 );
+			else
+				VGA_R <= ( others => '0' );
+				VGA_G <= ( others => '0' );
+				VGA_B <= ( others => '0' );
 			end if;
 		end if;
 	end process;

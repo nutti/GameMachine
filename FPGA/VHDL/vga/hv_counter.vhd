@@ -27,7 +27,7 @@ architecture RTL of HV_COUNTER is
 	
 begin
 
-	-- Generate PIXEL_CLK.
+	-- Generate PIXEL_CLK. ( 25 MHz )
 	process ( CLK, RST ) begin
 		if( RST = '1' ) then
 			PIXEL_CLK <= '0';
@@ -54,10 +54,12 @@ begin
 		if( RST = '1' ) then
 			V_COUNT <= ( others => '0' );
 		elsif( PIXEL_CLK'event and PIXEL_CLK = '1' ) then
-			if( V_COUNT = V_COUNT_MAX - 1 ) then
-				V_COUNT <= ( others => '0' );
-			else
-				V_COUNT <= V_COUNT + '1';
+			if( H_COUNT = H_COUNT_MAX - 1 ) then
+				if( V_COUNT = V_COUNT_MAX - 1 ) then
+					V_COUNT <= ( others => '0' );
+				else
+					V_COUNT <= V_COUNT + '1';
+				end if;
 			end if;
 		end if;
 	end process;
@@ -80,10 +82,12 @@ begin
 		if( RST = '1' ) then
 			V_VGA_SYNC <= '1';
 		elsif( PIXEL_CLK'event and PIXEL_CLK = '1' ) then
-			if( V_COUNT = V_SYNC_START ) then
-				V_VGA_SYNC <= '0';
-			elsif( V_COUNT = V_SYNC_END ) then
-				V_VGA_SYNC <= '1';
+			if( H_COUNT  = H_SYNC_START ) then
+				if( V_COUNT = V_SYNC_START ) then
+					V_VGA_SYNC <= '0';
+				elsif( V_COUNT = V_SYNC_END ) then
+					V_VGA_SYNC <= '1';
+				end if;
 			end if;
 		end if;
 	end process;
